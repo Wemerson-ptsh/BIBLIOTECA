@@ -4,41 +4,61 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class RevistaJornalTest {
+class LivroTest {
 
-    @Test
-    void revistaDeveArmazenarEdicao() {
-        Revista revista = new Revista("Título", "Autor", "Edição 100");
+    @Test
+    void livroDeveComecarComoDisponivel() {
+        Livro livro = new Livro("Título", "Autor");
 
-        assertEquals("Edição 100", revista.getEdicao());
-    }
+        assertFalse(livro.isEmprestado());
+    }
 
-    @Test
-    void revistaNaoDeveImplementarEmprestavel() {
-        Revista revista = new Revista("Título", "Autor", "Edição 1");
+    @Test
+    void deveEmprestarLivroDisponivel() {
+        Livro livro = new Livro("Título", "Autor");
 
-        assertFalse(revista instanceof Emprestavel,
-                "Revista não deve poder ser emprestada neste sistema.");
-    }
+        livro.emprestar();
 
-    @Test
-    void getTipoDaRevistaDeveRetornarRevista() {
-        Revista revista = new Revista("Título", "Autor", "Edição 1");
+        assertTrue(livro.isEmprestado());
+    }
 
-        assertEquals("Revista", revista.getTipo());
-    }
+    @Test
+    void naoDeveEmprestarLivroJaEmprestado() {
+        Livro livro = new Livro("Título", "Autor");
+        livro.emprestar();
 
-    @Test
-    void jornalDeveArmazenarData() {
-        Jornal jornal = new Jornal("Título", "Autor", "05/07/2026");
+        assertThrows(IllegalStateException.class, livro::emprestar);
+    }
 
-        assertEquals("05/07/2026", jornal.getData());
-    }
+    @Test
+    void deveDevolverLivroEmprestado() {
+        Livro livro = new Livro("Título", "Autor");
+        livro.emprestar();
 
-    @Test
-    void getTipoDoJornalDeveRetornarJornal() {
-        Jornal jornal = new Jornal("Título", "Autor", "05/07/2026");
+        livro.devolver();
 
-        assertEquals("Jornal", jornal.getTipo());
-    }
+        assertFalse(livro.isEmprestado());
+    }
+
+    @Test
+    void naoDeveDevolverLivroQueNaoEstaEmprestado() {
+        Livro livro = new Livro("Título", "Autor");
+
+        assertThrows(IllegalStateException.class, livro::devolver);
+    }
+
+    @Test
+    void getTipoDeveRetornarLivro() {
+        Livro livro = new Livro("Título", "Autor");
+
+        assertEquals("Livro", livro.getTipo());
+    }
+
+    @Test
+    void livroDeveSerInstanciaDeItemBibliotecaEEmprestavel() {
+        Livro livro = new Livro("Título", "Autor");
+
+        assertInstanceOf(ItemBiblioteca.class, livro);
+        assertInstanceOf(Emprestavel.class, livro);
+    }
 }
